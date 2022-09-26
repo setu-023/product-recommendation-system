@@ -1,4 +1,5 @@
 from django.conf import settings
+import requests
 
 from rest_framework.exceptions import MethodNotAllowed
 from rest_framework.generics import ListCreateAPIView, CreateAPIView
@@ -44,3 +45,25 @@ class CustomerListCreateAPIView(ListCreateAPIView):
             print(e)
             return Response(data={'message': f'cannot create user. reason: {e}'}, status=status.HTTP_409_CONFLICT)
 
+
+class UserRoleAPIView(ListCreateAPIView):
+    
+    serializer_class = UserSerializer
+
+    def get_permissions(self):
+        if self.request.method == 'PUT':
+            return (permissions.IsAdminUser(),)
+
+    def put(self, request, *args, **kwargs):
+
+        try:
+            get_user = request.data['user']
+            get_role = request.data['role']
+
+            get_user = CustomUser.objects.get(id=request.data['user'])
+            get_user.user_type = request.data['role']
+            get_user.save()
+            return Response({'status':'200', 'msg': 'data updated', }, status.HTTP_200_OK,)
+        except Exception as e:
+            print(e)
+            return Response(data={'message': f'cannot create user. reason: {e}'}, status=status.HTTP_409_CONFLICT)
