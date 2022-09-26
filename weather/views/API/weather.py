@@ -92,9 +92,9 @@ def get_current_temp(request):
             get_weather_type = Weather.objects.get(low_range__lte=get_current_temp, high_range__gte=get_current_temp)
             print((get_weather_type))
             get_weather_type_id = WeatherSerializer(get_weather_type)
-            print(get_weather_type_id.data['id'])
+            print(get_weather_type_id.data['name'])
 
         except Exception as e:
             print(e)
-            return (-1)
-        return get_weather_type_id.data['id']
+            return None
+        return get_weather_type_id.data['name']
